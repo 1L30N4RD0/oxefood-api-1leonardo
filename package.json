@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  },
+  "name": "oxefood-api-1leonardo",
+  "description": "Projeto utilizado como exemplo para a disciplina de Desenvolvimento para WEB no IFPE Campus Jaboatão dos Guararapes",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
