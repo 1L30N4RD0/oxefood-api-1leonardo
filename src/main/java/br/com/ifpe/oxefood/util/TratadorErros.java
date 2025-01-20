@@ -1,4 +1,5 @@
 package br.com.ifpe.oxefood.util;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,14 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class TratadorErros {
-
-   @SuppressWarnings("rawtypes")
-@ExceptionHandler(Exception.class)
-   public ResponseEntity tratarErro500(Exception ex) {
-
-       return ResponseEntity.internalServerError().body(ex.getMessage());
-   }
-
+    
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         
@@ -38,3 +32,4 @@ public class TratadorErros {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
+

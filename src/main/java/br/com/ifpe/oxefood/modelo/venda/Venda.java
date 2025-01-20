@@ -12,9 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
-@Table(name = "venda")
+@Table(name = "Venda")
 @SQLRestriction("habilitado = true")
 @Builder
 @Getter
@@ -22,13 +21,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Venda extends EntidadeAuditavel  {
-    
+  
    @Column
    private String cliente;
-
+  
    @Column
    private String produto;
-
+  
    @Column
    private String statusVenda;
 
@@ -43,4 +42,5 @@ public class Venda extends EntidadeAuditavel  {
 
    @Column
    private Boolean retiradaEmLoja;
+
 }

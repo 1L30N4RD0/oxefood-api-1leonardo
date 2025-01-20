@@ -13,59 +13,64 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "entregador")
+@Table(name = "Entregador")
 @SQLRestriction("habilitado = true")
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Entregador extends EntidadeAuditavel {
-    @Column (nullable = false, length = 100)
-    private String nome;
+public class Entregador extends EntidadeAuditavel  {
+  
+   @Column
+   private String nome;
 
-    @Column (unique = true)
-    private String cpf;
+   @Column
+   private LocalDate dataNascimento;
 
-    @Column (unique = true)
-    private String rg;
+   @Column
+   private String cpf;
 
-    @Column (nullable = false)
-    private LocalDate dataNascimento;
+   @Column
+   private String foneCelular;
 
-    @Column (nullable = false)
-    private String foneCelular;
+   @Column
+   private String foneFixo;
 
-    @Column (nullable = false)
-    private String foneFixo;
+   @Column
+   private String rg;
 
-    @Column
-    private Integer qtdEntregasRealizadas;
+   @Column
+   private String qtdEntregasRealizadas;
 
-    @Column
-    private Double valorFrete;
+   @Column
+   private String valorFrete;
 
-    @Column (nullable = false)
-    private String enderecoRua;
+   @Column
+   private String enderecoRua;
 
-    @Column 
-    private String enderecoComplemento;
+   @Column
+   private Number enderecoNumero;
 
-    @Column (nullable = false)
-    private String enderecoNumero;
+   @Column
+   private String enderecoBairro;
 
-    @Column (nullable = false)
-    private String enderecoBairro;
+   @Column
+   private String enderecoCep;
 
-    @Column (nullable = false)
-    private String enderecoCidade;
+   @Column
+   private String enderecoCidade;
 
-    @Column (nullable = false)
-    private String enderecoCep;
+   @Column
+   private String enderecoEstado;
 
-    @Column (nullable = false)
-    private String enderecoUf;
+   @Column
+   private String enderecoComplemento;
 
-    @Column (nullable = false)
-    private Boolean ativo;
+   @Column
+   private Boolean ativo;
+   
+   @Column
+   private String email;
+
 }

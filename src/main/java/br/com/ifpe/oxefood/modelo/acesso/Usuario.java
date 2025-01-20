@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "Usuario")
 @SQLRestriction("habilitado = true")
 @Builder
 @Getter
@@ -34,7 +34,6 @@ public class Usuario extends EntidadeNegocio implements UserDetails {
 
    @Column(nullable = false, unique = true)
    private String username;
-
    @JsonIgnore
    @Column(nullable = false)
    private String password;

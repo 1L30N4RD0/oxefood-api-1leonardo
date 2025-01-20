@@ -1,9 +1,10 @@
 package br.com.ifpe.oxefood.modelo.cliente;
-import java.util.List;
+
 import java.time.LocalDate;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import java.util.List;
+
 import org.hibernate.annotations.SQLRestriction;
+
 import br.com.ifpe.oxefood.modelo.acesso.Usuario;
 import br.com.ifpe.oxefood.util.entity.EntidadeAuditavel;
 import jakarta.persistence.Column;
@@ -19,8 +20,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 @Entity
-@Table(name = "cliente")
+@Table(name = "Cliente")
 @SQLRestriction("habilitado = true")
 @Builder
 @Getter
@@ -28,7 +32,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cliente extends EntidadeAuditavel  {
-    
+
    @OneToOne
    @JoinColumn(nullable = false)
    private Usuario usuario;
@@ -36,12 +40,15 @@ public class Cliente extends EntidadeAuditavel  {
    @OneToMany(mappedBy = "cliente", orphanRemoval = true, fetch = FetchType.EAGER)
    @Fetch(FetchMode.SUBSELECT)
    private List<EnderecoCliente> enderecos;
-   
+  
    @Column (nullable = false, length = 100)
    private String nome;
 
-   @Column (nullable = false)
+   @Column
    private LocalDate dataNascimento;
+
+   @Column
+   private String email;
 
    @Column (unique = true)
    private String cpf;
@@ -51,4 +58,5 @@ public class Cliente extends EntidadeAuditavel  {
 
    @Column
    private String foneFixo;
+
 }

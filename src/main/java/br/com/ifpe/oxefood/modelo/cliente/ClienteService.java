@@ -1,18 +1,27 @@
 package br.com.ifpe.oxefood.modelo.cliente;
 
+import jakarta.transaction.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.transaction.Transactional;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import br.com.ifpe.oxefood.modelo.acesso.Perfil;
 import br.com.ifpe.oxefood.modelo.acesso.PerfilRepository;
+import br.com.ifpe.oxefood.modelo.acesso.Usuario;
 import br.com.ifpe.oxefood.modelo.acesso.UsuarioService;
-import br.com.ifpe.oxefood.util.exception.ClienteException;
+import br.com.ifpe.oxefood.modelo.mensagens.EmailService;
 
 @Service
 public class ClienteService {
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private ClienteRepository repository;
@@ -27,7 +36,7 @@ public class ClienteService {
     private PerfilRepository perfilUsuarioRepository;
 
     @Transactional
-    public Cliente save(Cliente cliente) {
+    public Cliente save(Cliente cliente, Usuario usuarioLogado) {
 
         usuarioService.save(cliente.getUsuario());
 
@@ -36,23 +45,41 @@ public class ClienteService {
             perfilUsuarioRepository.save(perfil);
         }
 
-        if (!cliente.getFoneCelular().startsWith("(81)") || !cliente.getFoneFixo().startsWith("(81)")) {
-            throw new ClienteException(ClienteException.MSG_PREFIXO_CLIENTE);
-        }
         cliente.setHabilitado(Boolean.TRUE);
-        return repository.save(cliente);
+        cliente.setCriadoPor(usuarioLogado);
+        Cliente clienteSalvo = repository.save(cliente);
+        emailService.enviarEmailConfirmacaoCadastroCliente(clienteSalvo);
+        return clienteSalvo;
     }
 
     public List<Cliente> listarTodos() {
+
         return repository.findAll();
     }
 
     public Cliente obterPorID(Long id) {
-        return repository.findById(id).get();
+
+        Optional<Cliente> consulta = repository.findById(id);
+
+        if (consulta.isPresent()) {
+            return consulta.get();
+        } else {
+            throw new EntidadeNaoEncontradaException("Cliente", id);
+        }
+
+    }
+
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public class EntidadeNaoEncontradaException extends RuntimeException {
+
+        public EntidadeNaoEncontradaException(String entidade, Long id) {
+            super(String.format("Não foi encontrado(a) um(a) %s com o id %s", entidade, id.toString()));
+        }
     }
 
     @Transactional
-    public void update(Long id, Cliente clienteAlterado) {
+    public void update(Long id, Cliente clienteAlterado, Usuario usuarioLogado) {
+
         Cliente cliente = repository.findById(id).get();
         cliente.setNome(clienteAlterado.getNome());
         cliente.setDataNascimento(clienteAlterado.getDataNascimento());
@@ -60,18 +87,18 @@ public class ClienteService {
         cliente.setFoneCelular(clienteAlterado.getFoneCelular());
         cliente.setFoneFixo(clienteAlterado.getFoneFixo());
 
+        cliente.setUltimaModificacaoPor(usuarioLogado);
+
         repository.save(cliente);
     }
 
     @Transactional
     public void delete(Long id) {
+
         Cliente cliente = repository.findById(id).get();
         cliente.setHabilitado(Boolean.FALSE);
-        repository.save(cliente);
-    }
 
-    public EnderecoCliente obterEnderecoPorID(Long id) {
-        return enderecoClienteRepository.findById(id).get();
+        repository.save(cliente);
     }
 
     @Transactional
@@ -80,11 +107,13 @@ public class ClienteService {
         Cliente cliente = this.obterPorID(clienteId);
 
         // Primeiro salva o EnderecoCliente:
+
         endereco.setCliente(cliente);
         endereco.setHabilitado(Boolean.TRUE);
         enderecoClienteRepository.save(endereco);
 
         // Depois acrescenta o endereço criado ao cliente e atualiza o cliente:
+
         List<EnderecoCliente> listaEnderecoCliente = cliente.getEnderecos();
 
         if (listaEnderecoCliente == null) {
